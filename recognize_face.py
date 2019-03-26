@@ -77,8 +77,7 @@ def main():
 			else:
 				print 'Unknown Human Detected!'
 				espeak.synth('Unknown human detected. Who are you stranger?')
-			while espeak.is_playing:
-				pass
+			
 			time.sleep(300)
 		if cv.waitKey(20) & 0xFF == ord('q'):
 			break
