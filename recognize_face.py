@@ -30,6 +30,8 @@ def detectFace(frame,face_cascade):
 	if len(faces) > 0 :
 		face_detected = True
 		cv.imwrite(image,frame) 
+		print 'Your image was saved to %s' % image
+
 	return face_detected, image
 
 def main():	
@@ -54,6 +56,9 @@ def main():
 
 	#Read the video stream
 	cam = cv.VideoCapture(camera_device)
+	#setting the buffer size and frames per second, to reduce frames in buffer
+	cam.set(cv.CAP_PROP_BUFFERSIZE, 1)
+	cam.set(cv.CAP_PROP_FPS, 2);
 
 	if not cam.isOpened:
 		print('--(!)Error opening video capture')
@@ -63,11 +68,17 @@ def main():
 	client = boto3.client('rekognition')
 
 	while True:
-		ret, frame = cam.read()
+		frame = {}
+		#calling read() twice as a workaround to clear the buffer.
+		cam.read()
+		cam.read()
+		ret, frame = cam.read()		
 		if frame is None:
 			print('--(!) No captured frame -- Break!')
 			break
+
 		face_detected, image = detectFace(frame,face_cascade)
+
 		if (face_detected):
 			face_matched, response = recognizeFace(client, image , args.collection)
 			if (face_matched):
@@ -77,8 +88,8 @@ def main():
 			else:
 				print 'Unknown Human Detected!'
 				espeak.synth('Unknown human detected. Who are you stranger?')
-			
-			time.sleep(300)
+			time.sleep(120)
+
 		if cv.waitKey(20) & 0xFF == ord('q'):
 			break
 
