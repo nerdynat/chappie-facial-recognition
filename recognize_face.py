@@ -25,10 +25,10 @@ def detectFace(frame,face_cascade):
 		minSize=(30, 30),
 		flags = cv.CASCADE_SCALE_IMAGE)
 	print("Found {0} faces!".format(len(faces)))
+	timestr = time.strftime("%Y%m%d-%H%M%S")
+	image = '{0}/image_{1}.png'.format(directory, timestr)
 	if len(faces) > 0 :
 		face_detected = True
-		timestr = time.strftime("%Y%m%d-%H%M%S")
-		image = '{0}/image_{1}.jpg'.format(directory, timestr)
 		cv.imwrite(image,frame) 
 	return face_detected, image
 
